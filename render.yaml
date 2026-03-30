@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: js-printing-service
+    runtime: dotnet
+    runtimeVersion: "10.0"
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: cd out && dotnet JS_Printing_Service.dll
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DOTNET_TieredCompilation
+        value: "1"
+      - key: DOTNET_TieredCompilationQuickJit
+        value: "1"
+    autoDeploy: true
+    maxInstances: 1
+    minInstances: 1
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

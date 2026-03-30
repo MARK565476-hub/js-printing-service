@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11620.152 stable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JS Printing Service", "JS Printing Service.csproj", "{9ECAF94A-37CC-E926-58C0-48E313309D66}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9ECAF94A-37CC-E926-58C0-48E313309D66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ECAF94A-37CC-E926-58C0-48E313309D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ECAF94A-37CC-E926-58C0-48E313309D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ECAF94A-37CC-E926-58C0-48E313309D66}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4398B566-DA2D-4AC3-9AA8-585A19482BA3}
+	EndGlobalSection
+EndGlobal

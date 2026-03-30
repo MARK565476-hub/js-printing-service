@@ -1,0 +1,152 @@
+@model UploadViewModel
+
+@{
+    ViewData["Title"] = "Preview & Download - JS Printing Service";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-check-circle"></i> Image Processing Complete
+                    </h3>
+                </div>
+
+                <div class="card-body">
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Processing Details:</strong>
+                        <br>
+                        Print Mode: <strong>@(Model?.PrintMode ?? "RAW")</strong>
+                        <br>
+                        Images: <strong>@(Model?.ProcessedImageBack != null ? "Front + Back" : "Front Only")</strong>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <h5 class="mb-3 fw-bold">
+                        <i class="bi bi-image"></i> Processed Images
+                    </h5>
+
+                    <div class="row">
+                        @if (Model?.ProcessedImageFront != null)
+                        {
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Front Side</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ProcessedImageFront)"
+                                             alt="Front Side"
+                                             class="img-fluid rounded"
+                                             style="max-height: 400px; border: 1px solid #ddd; padding: 5px;">
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (Model?.ProcessedImageBack != null)
+                        {
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Back Side</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ProcessedImageBack)"
+                                             alt="Back Side"
+                                             class="img-fluid rounded"
+                                             style="max-height: 400px; border: 1px solid #ddd; padding: 5px;">
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-4">
+                        <h5 class="mb-3 fw-bold">
+                            <i class="bi bi-download"></i> Next Steps
+                        </h5>
+
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <form method="post" action="@Url.Action("GeneratePdf")" style="display: inline;">
+                                    <button type="submit" class="btn btn-success btn-lg w-100">
+                                        <i class="bi bi-file-pdf"></i>
+                                        <br>
+                                        <small>Download PDF</small>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="col-md-4">
+                                <a href="@Url.Action("Print")" class="btn btn-info btn-lg w-100" target="_blank">
+                                    <i class="bi bi-printer"></i>
+                                    <br>
+                                    <small>Print Ready</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-4">
+                                <a href="@Url.Action("Index")" class="btn btn-secondary btn-lg w-100">
+                                    <i class="bi bi-arrow-left"></i>
+                                    <br>
+                                    <small>Upload Another</small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features Info -->
+                    <div class="mt-4 p-3 bg-light border-start border-success border-3 rounded">
+                        <h6 class="fw-bold mb-2">
+                            <i class="bi bi-check2-all"></i> Processing Features Applied
+                        </h6>
+                        <ul class="mb-0 small">
+                            <li>✓ Automatic Aadhaar region detection and cropping</li>
+                            <li>✓ Image sharpening and contrast enhancement</li>
+                            <li>✓ Brightness normalization</li>
+                            <li>✓ @(Model?.PrintMode switch
+                            {
+                                "COLOR" => "Enhanced color saturation",
+                                "BLACK_WHITE" or "BW" => "Converted to black & white",
+                                _ => "Raw image (no enhancement)"
+                            })</li>
+                            <li>✓ Optimized for A4 printing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <small class="text-muted">
+                        <i class="bi bi-shield-check"></i>
+                        All processing is done locally on your device. No data is sent to external servers.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-lg {
+        font-weight: 500;
+        padding: 12px;
+    }
+
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    img {
+        object-fit: contain;
+    }
+</style>

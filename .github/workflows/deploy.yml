@@ -1,0 +1,56 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Test (Optional)
+      run: dotnet test --configuration Release --no-build --verbosity normal
+    
+    - name: Publish Release Build
+      run: dotnet publish -c Release -o ${{ github.workspace }}/publish
+    
+    - name: Upload Release Build
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-build
+        path: ${{ github.workspace }}/publish
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Deploy to Render
+      # Use if deploying to Render (auto-deploy from GitHub)
+      run: |
+        echo "Render auto-deploys from GitHub. Check https://dashboard.render.com"
+    
+    # Uncomment below for manual Azure deployment
+    # - name: Deploy to Azure
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: 'js-printing-service'
+    #     publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+    #     package: ${{ github.workspace }}/publish

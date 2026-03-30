@@ -1,0 +1,179 @@
+@model UploadViewModel
+@{
+    ViewData["Title"] = "Print - JS Printing Service";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadhaar Card Print - JS Printing Service</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .print-container {
+            background: white;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .a4-page {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            padding: 10mm;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            page-break-after: always;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 15mm;
+            font-weight: bold;
+            font-size: 16pt;
+            color: #333;
+        }
+
+        .image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            max-height: 250mm;
+        }
+
+        .image-container img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            padding: 5mm;
+        }
+
+        .page-footer {
+            margin-top: 10mm;
+            text-align: center;
+            font-size: 8pt;
+            color: #999;
+        }
+
+        .no-print {
+            display: block;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+
+        .print-button-group {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .print-button-group button {
+            margin-right: 10px;
+        }
+
+        .print-info {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        img {
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <div class="print-info">
+            <i class="bi bi-info-circle"></i>
+            <strong>Print Instructions:</strong>
+            <ul style="margin-top: 8px; margin-bottom: 0;">
+                <li>Set paper size to <strong>A4</strong></li>
+                <li>Set margins to <strong>0 or minimum</strong></li>
+                <li>Select <strong>landscape orientation</strong> if images appear cut off</li>
+                <li>Use <strong>high quality</strong> or <strong>best</strong> print setting</li>
+                <li>Color or B/W printing: Your choice based on document mode</li>
+            </ul>
+        </div>
+
+        <div class="print-button-group">
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="bi bi-printer"></i> Print Now
+            </button>
+            <button class="btn btn-secondary" onclick="window.history.back()">
+                <i class="bi bi-arrow-left"></i> Go Back
+            </button>
+        </div>
+    </div>
+
+    <div class="print-container">
+        <!-- Front Image Page -->
+        <div class="a4-page">
+            <div class="page-header">AADHAAR CARD - FRONT SIDE</div>
+            <div class="image-container">
+                @if (Model?.ProcessedImageFront != null)
+                {
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ProcessedImageFront)" 
+                         alt="Aadhaar Front Side">
+                }
+            </div>
+            <div class="page-footer">
+                <div>Printed on: @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</div>
+                <div>© JS Printing Service</div>
+            </div>
+        </div>
+
+        <!-- Back Image Page (if available) -->
+        @if (Model?.ProcessedImageBack != null)
+        {
+            <div class="a4-page">
+                <div class="page-header">AADHAAR CARD - BACK SIDE</div>
+                <div class="image-container">
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ProcessedImageBack)" 
+                         alt="Aadhaar Back Side">
+                </div>
+                <div class="page-footer">
+                    <div>Printed on: @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</div>
+                    <div>© JS Printing Service</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script>
+        var printStyles = document.createElement('style');
+        var cssText = String.fromCharCode(64) + 'media print { .no-print { display: none !important; } .print-container { padding: 0; box-shadow: none; background: white; } .a4-page { margin: 0; padding: 10mm; box-shadow: none; page-break-after: always; width: 210mm; height: 297mm; } } ' + String.fromCharCode(64) + 'page { size: A4; margin: 0; }';
+        printStyles.textContent = cssText;
+        document.head.appendChild(printStyles);
+
+        window.addEventListener('load', function () {
+            // Auto-print can be enabled here if desired: window.print();
+        });
+    </script>
+</body>
+</html>

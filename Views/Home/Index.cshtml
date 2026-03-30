@@ -1,0 +1,1606 @@
+@model UploadViewModel
+
+@{
+    ViewData["Title"] = "Aadhaar Card Processor - AI-Powered Enhancement";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f23 100%);
+        background-attachment: fixed;
+        backdrop-filter: blur(80px);
+        color: #e0e0e0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        padding-bottom: 50px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, 
+            rgba(0, 255, 255, 0.03) 0%, 
+            rgba(255, 0, 255, 0.03) 50%, 
+            rgba(0, 255, 255, 0.03) 100%);
+        pointer-events: none;
+        z-index: 1;
+        animation: bgShimmer 8s ease-in-out infinite;
+    }
+
+    /* Falling Water Droplets - Enhanced Glow */
+    body::after {
+        content: '';
+        position: fixed;
+        top: -50px;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        background-image: 
+            radial-gradient(circle 3px at 20% 10%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.4) 40%, transparent 100%),
+            radial-gradient(circle 3px at 40% 30%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.3) 40%, transparent 100%),
+            radial-gradient(circle 3px at 60% 50%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.35) 40%, transparent 100%),
+            radial-gradient(circle 3px at 80% 20%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.25) 40%, transparent 100%),
+            radial-gradient(circle 3px at 10% 40%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.45) 40%, transparent 100%),
+            radial-gradient(circle 3px at 50% 70%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.3) 40%, transparent 100%),
+            radial-gradient(circle 3px at 30% 60%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.35) 40%, transparent 100%),
+            radial-gradient(circle 3px at 70% 40%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.25) 40%, transparent 100%),
+            radial-gradient(circle 3px at 90% 60%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.4) 40%, transparent 100%),
+            radial-gradient(circle 3px at 15% 70%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.3) 40%, transparent 100%);
+        background-size: 100% 100%;
+        background-repeat: repeat-y;
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4)) blur(1px);
+        pointer-events: none;
+        z-index: 1;
+        animation: dropletFall 15s linear infinite, rainGlowPulse 3s ease-in-out infinite;
+    }
+
+    /* Cursor Glow Element */
+    #cursorGlow {
+        position: fixed;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9998;
+        opacity: 0;
+        will-change: transform, opacity;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 20%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+        filter: blur(25px);
+        mix-blend-mode: screen;
+        box-shadow: 
+            0 0 20px rgba(255, 255, 255, 0.6),
+            0 0 40px rgba(255, 255, 255, 0.3),
+            inset 0 0 20px rgba(255, 255, 255, 0.2);
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    #cursorGlow.active {
+        animation: glowPulse 1.5s ease-in-out infinite;
+    }
+
+    /* Cursor Trail */
+    .cursor-trail {
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9997;
+        will-change: transform, opacity;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 30%, transparent 100%);
+        filter: blur(20px);
+        mix-blend-mode: screen;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    /* ===== DEPTH FOG LAYER ===== */
+    #depthFog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at 50% 50%, rgba(0, 255, 255, 0.02) 0%, rgba(0, 255, 255, 0.08) 100%);
+        pointer-events: none;
+        z-index: 2;
+        animation: fogDrift 20s ease-in-out infinite;
+    }
+
+    /* ===== ENERGY RIPPLE CONTAINER ===== */
+    .energy-ripple {
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 3000;
+        border: 2px solid var(--primary-color, #00ffff);
+        opacity: 0;
+    }
+
+    /* ===== PARTICLE BURST ===== */
+    .particle-burst {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9996;
+        will-change: transform, opacity;
+        border-radius: 50%;
+    }
+
+    /* ===== THEME TOGGLE BUTTON ===== */
+    #themeToggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid var(--primary-color, #00ffff);
+        background: rgba(10, 10, 10, 0.8);
+        color: var(--primary-color, #00ffff);
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        animation: buttonGlowPulse 3s ease-in-out infinite;
+    }
+
+    #themeToggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+    }
+
+    /* ===== LIQUID GLASS BUTTON HIGHLIGHT ===== */
+    .btn-neon::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255, 255, 255, 0.3) 50%, 
+            transparent 100%);
+        animation: liquidGloss 3s infinite;
+        pointer-events: none;
+        border-radius: 4px;
+    }
+
+    /* ===== PROFESSIONAL THEME SYSTEM ===== */
+    :root {
+        /* Design Tokens - Cyber Default */
+        --color-bg-primary: #0a0a0a;
+        --color-bg-secondary: #1a1a2e;
+        --color-accent-primary: #00ffff;
+        --color-accent-secondary: #ff00ff;
+        --color-glow-primary: rgba(0, 255, 255, 0.5);
+        --color-glow-secondary: rgba(0, 255, 255, 0.2);
+        --color-text-primary: #e0e0e0;
+        --color-text-secondary: #b0b0b0;
+        --color-text-muted: #7a7a7a;
+        --color-border: #00ffff;
+        --color-danger: #ff1744;
+        --color-success: #00ff41;
+        --color-warning: #ff00ff;
+        --transition-duration: 0.4s;
+        --glow-intensity: 1;
+    }
+
+    /* Theme: Cyber (Default) */
+    body.theme-cyber {
+        --color-accent-primary: #00ffff;
+        --color-accent-secondary: #ff00ff;
+        --color-success: #00ff41;
+        --color-glow-primary: rgba(0, 255, 255, 0.5);
+        --color-glow-secondary: rgba(0, 255, 255, 0.2);
+        --color-border: #00ffff;
+    }
+
+    /* Theme: Matrix */
+    body.theme-matrix {
+        --color-accent-primary: #00ff41;
+        --color-accent-secondary: #0f0;
+        --color-success: #00ff00;
+        --color-glow-primary: rgba(0, 255, 65, 0.5);
+        --color-glow-secondary: rgba(0, 255, 65, 0.2);
+        --color-border: #00ff41;
+    }
+
+    /* Theme: Danger */
+    body.theme-danger {
+        --color-accent-primary: #ff1744;
+        --color-accent-secondary: #ff6b6b;
+        --color-success: #ff1744;
+        --color-glow-primary: rgba(255, 23, 68, 0.5);
+        --color-glow-secondary: rgba(255, 23, 68, 0.2);
+        --color-border: #ff1744;
+    }
+
+    /* Theme: Purple */
+    body.theme-purple {
+        --color-accent-primary: #9c27b0;
+        --color-accent-secondary: #ce93d8;
+        --color-success: #ba68c8;
+        --color-glow-primary: rgba(156, 39, 176, 0.5);
+        --color-glow-secondary: rgba(156, 39, 176, 0.2);
+        --color-border: #9c27b0;
+    }
+
+    /* Theme: Ice */
+    body.theme-ice {
+        --color-accent-primary: #e0f7ff;
+        --color-accent-secondary: #80deea;
+        --color-success: #4dd0e1;
+        --color-glow-primary: rgba(224, 247, 255, 0.4);
+        --color-glow-secondary: rgba(224, 247, 255, 0.15);
+        --color-border: #80deea;
+    }
+
+    /* Global transition rule */
+    * {
+        transition: background-color var(--transition-duration) ease, 
+                    color var(--transition-duration) ease,
+                    border-color var(--transition-duration) ease,
+                    box-shadow var(--transition-duration) ease,
+                    text-shadow var(--transition-duration) ease !important;
+    }
+
+    .main-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .cyber-container {
+        background: rgba(10, 10, 10, 0.7);
+        border: 2px solid #00ffff;
+        border-radius: 8px;
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1);
+        padding: 40px;
+        margin-top: 40px;
+        backdrop-filter: blur(10px);
+        animation: borderPulse 3s ease-in-out infinite, containerGlowWave 8s ease-in-out infinite, containerBreathe 6s ease-in-out infinite;
+    }
+
+    .cyber-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, #00ffff, #ff00ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        margin-bottom: 10px;
+        animation: titleGlow 4s ease-in-out infinite, titleWave 8s ease-in-out infinite;
+    }
+
+    .cyber-subtitle {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem;
+        color: #ff00ff;
+        margin-bottom: 30px;
+        animation: subtitlePulse 3s ease-in-out infinite, subtitleGlow 6s ease-in-out infinite;
+    }
+
+    .drag-drop-area {
+        border: 3px dashed #00ffff;
+        border-radius: 8px;
+        padding: 50px 20px;
+        text-align: center;
+        cursor: pointer;
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.05) 0%, rgba(255, 0, 255, 0.05) 100%);
+        transition: all 0.3s ease;
+        position: relative;
+        animation: dragAreaPulse 4s ease-in-out infinite, dragAreaGlow 6s ease-in-out infinite;
+    }
+
+    .drag-drop-area:hover {
+        border-color: #ff00ff;
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+    }
+
+    .drag-drop-area.drag-over {
+        border-color: #00ff41;
+        background: linear-gradient(135deg, rgba(0, 255, 65, 0.15) 0%, rgba(0, 255, 65, 0.15) 100%);
+        box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+    }
+
+    .drag-drop-icon {
+        font-size: 3rem;
+        color: #00ffff;
+        margin-bottom: 15px;
+        animation: iconBounce 2s ease-in-out infinite, iconRotate 6s linear infinite, iconPulse 4s ease-in-out infinite;
+        display: inline-block;
+    }
+
+    .drag-drop-text {
+        font-size: 1.2rem;
+        color: #00ffff;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .drag-drop-hint {
+        color: #7a7a7a;
+        font-size: 0.9rem;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .file-list {
+        margin-top: 20px;
+        display: grid;
+        gap: 10px;
+    }
+
+    .file-item {
+        background: rgba(0, 255, 255, 0.1);
+        border-left: 4px solid #00ffff;
+        padding: 12px;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        animation: slideIn 0.3s ease, fileItemShimmer 6s ease-in-out infinite, fileItemHighlight 4s ease-in-out infinite;
+        transition: all 0.3s ease;
+    }
+
+    .file-item:hover {
+        animation: fileItemHover 0.5s ease forwards, fileItemShimmer 6s ease-in-out infinite;
+        transform: translateX(5px);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    }
+
+    .file-item.success {
+        border-left-color: #00ff41;
+        background: rgba(0, 255, 65, 0.1);
+    }
+
+    .file-item.error {
+        border-left-color: #ff1744;
+        background: rgba(255, 23, 68, 0.1);
+    }
+
+    .file-item.info {
+        border-left-color: #00ffff;
+        background: rgba(0, 255, 255, 0.05);
+        color: #00ffff;
+    }
+
+    .file-name {
+        color: #e0e0e0;
+    }
+
+    .file-size {
+        color: #7a7a7a;
+        font-size: 0.85rem;
+    }
+
+    .btn-neon {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        border: 2px solid #00ffff;
+        background: transparent;
+        color: #00ffff;
+        padding: 12px 30px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        margin: 5px;
+        font-size: 1rem;
+        animation: buttonGlowPulse 3s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-neon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: buttonShimmer 3s infinite;
+    }
+
+    .btn-neon:hover {
+        background: #00ffff;
+        color: #0a0a0a;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.7), 0 0 40px rgba(0, 255, 255, 0.5);
+        transform: scale(1.05) translateY(-3px);
+        animation: buttonHoverGlow 0.6s ease forwards;
+    }
+
+    .btn-neon.primary {
+        border-color: #ff00ff;
+        color: #ff00ff;
+        box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        animation: buttonGlowPulse 3s ease-in-out infinite, primaryPulse 4s ease-in-out infinite;
+    }
+
+    .btn-neon.primary:hover {
+        background: #ff00ff;
+        color: #0a0a0a;
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.7), 0 0 40px rgba(255, 0, 255, 0.5);
+        animation: primaryHoverGlow 0.6s ease forwards;
+    }
+
+    .btn-neon.success {
+        border-color: #00ff41;
+        color: #00ff41;
+        box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        animation: buttonGlowPulse 3s ease-in-out infinite, successPulse 4s ease-in-out infinite;
+    }
+
+    .btn-neon.success:hover {
+        background: #00ff41;
+        color: #0a0a0a;
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.7), 0 0 40px rgba(0, 255, 65, 0.5);
+        animation: successHoverGlow 0.6s ease forwards;
+    }
+
+    .btn-neon:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .progress-container {
+        display: none;
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .progress-container.show {
+        display: block;
+        animation: slideIn 0.3s ease;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border: 3px solid rgba(0, 255, 255, 0.3);
+        border-top: 3px solid #00ffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite, spinnerGlow 2s ease-in-out infinite, spinnerColorCycle 4s ease-in-out infinite;
+        margin-right: 10px;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .status-text {
+        color: #00ffff;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    .progress-bar-cyber {
+        height: 4px;
+        background: linear-gradient(90deg, #00ffff, #ff00ff, #00ffff);
+        border-radius: 2px;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        margin-top: 15px;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00ffff, #ff00ff);
+        width: 0%;
+        animation: progress 2s ease-in-out infinite, progressWave 4s ease-in-out infinite, progressGlow 3s ease-in-out infinite;
+    }
+
+    .preview-container {
+        display: none;
+        margin-top: 30px;
+        padding: 20px;
+        background: rgba(0, 255, 255, 0.05);
+        border: 2px solid #00ffff;
+        border-radius: 8px;
+        animation: previewFloat 8s ease-in-out infinite;
+    }
+
+    .preview-container.show {
+        display: block;
+        animation: slideIn 0.3s ease, previewFloat 8s ease-in-out infinite, previewGlow 6s ease-in-out infinite;
+    }
+
+    .preview-title {
+        font-family: 'Orbitron', sans-serif;
+        color: #00ffff;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .preview-image {
+        max-width: 100%;
+        height: auto;
+        border: 2px solid #00ffff;
+        border-radius: 4px;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: imageBreathing 6s ease-in-out infinite;
+    }
+
+    .preview-image:hover {
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.6), 0 0 50px rgba(255, 0, 255, 0.3);
+        transform: scale(1.02);
+        border-color: #ff00ff;
+        animation: imageHoverGlow 0.5s ease forwards, imageBreathing 6s ease-in-out infinite;
+    }
+
+    .download-button-group {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .alert-error {
+        background: rgba(255, 23, 68, 0.15);
+        border: 2px solid #ff1744;
+        border-radius: 4px;
+        padding: 15px;
+        color: #ff6b6b;
+        margin-bottom: 20px;
+        animation: alertSlideIn 0.4s ease, alertPulse 2s ease-in-out infinite;
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 65, 0.15);
+        border: 2px solid #00ff41;
+        border-radius: 4px;
+        padding: 15px;
+        color: #00ff41;
+        margin-bottom: 20px;
+        animation: alertSlideIn 0.4s ease, alertSuccessPulse 2s ease-in-out infinite;
+    }
+
+    .info-box {
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+        border-left: 4px solid #00ffff;
+        border-radius: 4px;
+        padding: 20px;
+        margin-top: 30px;
+        color: #b0b0b0;
+        animation: infoBoxGradientShift 8s ease-in-out infinite, infoBoxPulse 4s ease-in-out infinite;
+    }
+
+    .info-title {
+        font-family: 'Orbitron', sans-serif;
+        color: #00ffff;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    @@keyframes borderPulse {
+        0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1); }
+        50% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2); }
+    }
+
+    @@keyframes slideIn {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    @@keyframes progress {
+        0%, 100% { width: 0%; }
+        50% { width: 100%; }
+    }
+
+    /* ===== NEW ANIMATIONS ===== */
+
+    @@keyframes bgShimmer {
+        0%, 100% { opacity: 0.03; }
+        50% { opacity: 0.08; }
+    }
+
+    @@keyframes dropletFall {
+        0% { transform: translateY(-50px); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    @@keyframes titleGlow {
+        0%, 100% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(255, 0, 255, 0.3); }
+        50% { text-shadow: 0 0 40px rgba(0, 255, 255, 0.8), 0 0 60px rgba(255, 0, 255, 0.6); }
+    }
+
+    @@keyframes titleWave {
+        0%, 100% { letter-spacing: 0px; }
+        50% { letter-spacing: 2px; }
+    }
+
+    @@keyframes subtitlePulse {
+        0%, 100% { opacity: 0.7; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    @@keyframes subtitleGlow {
+        0%, 100% { text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
+        50% { text-shadow: 0 0 30px rgba(255, 0, 255, 0.9), 0 0 50px rgba(0, 255, 255, 0.5); }
+    }
+
+    @@keyframes iconBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @@keyframes iconRotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @@keyframes iconPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+    }
+
+    @@keyframes textWave {
+        0%, 100% { transform: skewX(0deg); }
+        25% { transform: skewX(-2deg); }
+        75% { transform: skewX(2deg); }
+    }
+
+    @@keyframes textGlow {
+        0%, 100% { text-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+        50% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.9), 0 0 35px rgba(0, 255, 255, 0.6); }
+    }
+
+    @@keyframes dragAreaPulse {
+        0%, 100% { background: linear-gradient(135deg, rgba(0, 255, 255, 0.05) 0%, rgba(255, 0, 255, 0.05) 100%); }
+        50% { background: linear-gradient(135deg, rgba(0, 255, 255, 0.15) 0%, rgba(255, 0, 255, 0.15) 100%); }
+    }
+
+    @@keyframes dragAreaGlow {
+        0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+        50% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.2); }
+    }
+
+    @@keyframes fileItemShimmer {
+        0%, 100% { background: rgba(0, 255, 255, 0.1); }
+        50% { background: rgba(0, 255, 255, 0.2); }
+    }
+
+    @@keyframes fileItemHighlight {
+        0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.2); }
+        50% { box-shadow: 0 0 15px rgba(0, 255, 255, 0.4); }
+    }
+
+    @@keyframes fileItemHover {
+        0% { background: rgba(0, 255, 255, 0.1); }
+        100% { background: rgba(0, 255, 255, 0.25); }
+    }
+
+    @@keyframes buttonGlowPulse {
+        0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+        50% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.6), 0 0 40px rgba(0, 255, 255, 0.3); }
+    }
+
+    @@keyframes buttonShimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    @@keyframes buttonHoverGlow {
+        0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+        100% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.8), 0 0 50px rgba(0, 255, 255, 0.5); }
+    }
+
+    @@keyframes primaryPulse {
+        0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 255, 0.3); }
+        50% { box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), 0 0 40px rgba(255, 0, 255, 0.3); }
+    }
+
+    @@keyframes primaryHoverGlow {
+        0% { box-shadow: 0 0 10px rgba(255, 0, 255, 0.3); }
+        100% { box-shadow: 0 0 30px rgba(255, 0, 255, 0.8), 0 0 50px rgba(255, 0, 255, 0.5); }
+    }
+
+    @@keyframes successPulse {
+        0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 65, 0.3); }
+        50% { box-shadow: 0 0 25px rgba(0, 255, 65, 0.6), 0 0 40px rgba(0, 255, 65, 0.3); }
+    }
+
+    @@keyframes successHoverGlow {
+        0% { box-shadow: 0 0 10px rgba(0, 255, 65, 0.3); }
+        100% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.8), 0 0 50px rgba(0, 255, 65, 0.5); }
+    }
+
+    @@keyframes spinnerGlow {
+        0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
+        50% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.9); }
+    }
+
+    @@keyframes spinnerColorCycle {
+        0%, 100% { border-top-color: #00ffff; }
+        33% { border-top-color: #ff00ff; }
+        66% { border-top-color: #00ff41; }
+    }
+
+    @@keyframes progressWave {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    @@keyframes progressGlow {
+        0%, 100% { filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5)); }
+        50% { filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.9)); }
+    }
+
+    @@keyframes previewFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @@keyframes previewGlow {
+        0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.2); }
+    }
+
+    @@keyframes imageBreathing {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.02); opacity: 0.95; }
+    }
+
+    @@keyframes imageHoverGlow {
+        0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); }
+        100% { box-shadow: 0 0 40px rgba(0, 255, 255, 0.8), 0 0 60px rgba(255, 0, 255, 0.5); }
+    }
+
+    @@keyframes alertSlideIn {
+        from { transform: translateX(-30px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @@keyframes alertPulse {
+        0%, 100% { border-color: #ff1744; box-shadow: 0 0 10px rgba(255, 23, 68, 0.3); }
+        50% { border-color: #ff6b6b; box-shadow: 0 0 25px rgba(255, 23, 68, 0.6); }
+    }
+
+    @@keyframes alertSuccessPulse {
+        0%, 100% { border-color: #00ff41; box-shadow: 0 0 10px rgba(0, 255, 65, 0.3); }
+        50% { border-color: #00ff41; box-shadow: 0 0 25px rgba(0, 255, 65, 0.6); }
+    }
+
+    @@keyframes infoBoxGradientShift {
+        0%, 100% { background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%); }
+        50% { background: linear-gradient(135deg, rgba(255, 0, 255, 0.1) 0%, rgba(0, 255, 255, 0.1) 100%); }
+    }
+
+    @@keyframes infoBoxPulse {
+        0%, 100% { border-left-color: #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+        50% { border-left-color: #ff00ff; box-shadow: 0 0 25px rgba(255, 0, 255, 0.4); }
+    }
+
+    @@keyframes containerGlowWave {
+        0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1); }
+        25% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2); }
+        50% { box-shadow: 0 0 40px rgba(255, 0, 255, 0.4), inset 0 0 25px rgba(255, 0, 255, 0.15); }
+        75% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2); }
+    }
+
+    @@keyframes containerBreathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.01); }
+    }
+
+    /* ===== ENHANCED CURSOR & RAIN GLOW ANIMATIONS ===== */
+
+    @@keyframes rainGlowPulse {
+        0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4)) blur(1px); }
+        50% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 35px rgba(255, 255, 255, 0.6)) blur(1px); }
+    }
+
+    @@keyframes glowPulse {
+        0%, 100% { 
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0.6;
+            filter: blur(25px);
+        }
+        50% { 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.9;
+            filter: blur(30px);
+        }
+    }
+
+    @@keyframes trailFade {
+        0% { opacity: 0.8; transform: scale(1); }
+        100% { opacity: 0; transform: scale(0.5); }
+    }
+
+    @@keyframes hoverGlowIntensify {
+        0%, 100% { 
+            box-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.6),
+                0 0 40px rgba(255, 255, 255, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        50% { 
+            box-shadow: 
+                0 0 30px rgba(255, 255, 255, 0.9),
+                0 0 60px rgba(255, 255, 255, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.4);
+        }
+    }
+
+    @@keyframes clickBurst {
+        0% { 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        100% { 
+            transform: translate(-50%, -50%) scale(2);
+            opacity: 0;
+        }
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .status-badge.ready {
+        background: #00ff41;
+        color: #0a0a0a;
+    }
+
+    .status-badge.processing {
+        background: #00ffff;
+        color: #0a0a0a;
+    }
+
+    /* ===== NEW ADVANCED EFFECT ANIMATIONS ===== */
+
+    @@keyframes fogDrift {
+        0%, 100% { transform: translateX(0) translateY(0); opacity: 0.03; }
+        25% { transform: translateX(50px) translateY(-30px); opacity: 0.05; }
+        50% { transform: translateX(100px) translateY(0); opacity: 0.08; }
+        75% { transform: translateX(50px) translateY(30px); opacity: 0.05; }
+    }
+
+    @@keyframes energyRipple {
+        0% {
+            width: 0;
+            height: 0;
+            opacity: 1;
+            box-shadow: 0 0 0 2px var(--primary-color, #00ffff);
+        }
+        100% {
+            width: 600px;
+            height: 600px;
+            opacity: 0;
+            box-shadow: 0 0 40px 2px var(--primary-color, #00ffff);
+        }
+    }
+
+    @@keyframes particleFall {
+        0% {
+            transform: translateY(0) translateX(0) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(300px) translateX(var(--tx, 0)) scale(0);
+            opacity: 0;
+        }
+    }
+
+    @@keyframes liquidGloss {
+        0% {
+            left: -100%;
+            opacity: 0;
+        }
+        10% {
+            opacity: 0.4;
+        }
+        50% {
+            opacity: 0.6;
+            left: 50%;
+        }
+        90% {
+            opacity: 0.4;
+        }
+        100% {
+            left: 100%;
+            opacity: 0;
+        }
+    }
+
+</style>
+
+<div class="main-container">
+    <div class="cyber-container">
+        <h1 class="cyber-title">
+            🆔 AADHAAR CARD PROCESSOR
+        </h1>
+        <p class="cyber-subtitle">
+            ◆ Developed By Markanday ◆
+        </p>
+
+        @if (!string.IsNullOrEmpty(Model?.ErrorMessage))
+        {
+            <div class="alert-error">
+                ⚠️ @Model.ErrorMessage
+            </div>
+        }
+
+        <!-- Upload Section -->
+        <div style="margin-bottom: 40px;">
+            <h3 style="color: #00ffff; font-family: 'Orbitron', sans-serif; margin-bottom: 20px;">
+                STEP 1: UPLOAD IMAGES
+            </h3>
+
+            <div class="drag-drop-area" id="dragDropArea" onclick="document.getElementById('imageFiles').click()">
+                <div class="drag-drop-icon">📤</div>
+                <p class="drag-drop-text">DRAG AADHAAR IMAGES HERE</p>
+                <p class="drag-drop-hint">Upload 1 image (combined) or 2 images (front & back), JPG/PNG, up to 50MB each</p>
+                <input type="file" id="imageFiles" class="file-input" accept=".jpg,.jpeg,.png,.bmp" multiple required>
+            </div>
+
+            <div id="fileList" class="file-list"></div>
+        </div>
+
+        <!-- Processing Section -->
+        <div id="processingSection" style="display: none; margin-bottom: 40px;">
+            <h3 style="color: #00ffff; font-family: 'Orbitron', sans-serif; margin-bottom: 20px;">
+                STEP 2: PROCESS IMAGES
+            </h3>
+
+            <div class="button-group">
+                <button type="button" class="btn-neon primary" id="previewBtn" onclick="generatePreview()">
+                    👁️ GENERATE PREVIEW
+                </button>
+                <button type="button" class="btn-neon" id="resetBtn" onclick="resetForm()">
+                    🔄 RESET
+                </button>
+            </div>
+
+            <div class="progress-container" id="progressContainer">
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div class="spinner"></div>
+                    <p class="status-text" id="statusText">Processing your images...</p>
+                </div>
+                <div class="progress-bar-cyber">
+                    <div class="progress-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="previewContainer" class="preview-container">
+            <h3 class="preview-title">
+                ✓ PREVIEW - AI ENHANCED A4 LAYOUT
+                <span class="status-badge ready">READY</span>
+            </h3>
+
+            <div style="position: relative; display: inline-block; width: 100%;">
+                <img id="previewImage" class="preview-image" alt="Preview" onclick="openPreviewInNewTab()" title="Click to open in new tab for printing">
+                <p style="color: #7a7a7a; font-size: 0.85rem; text-align: center; margin-top: -15px; margin-bottom: 15px;">
+                    💡 Click preview to open in new tab for easy printing
+                </p>
+            </div>
+
+            <p style="color: #7a7a7a; font-size: 0.9rem; margin-bottom: 20px;">
+                Preview (50% scale) | Resolution: 2480×3508px (300 DPI) | Format: JPEG (Quality 95)
+            </p>
+
+            <div class="download-button-group">
+                <button type="button" class="btn-neon success" id="downloadJpegBtn" onclick="downloadJpeg()">
+                    ⬇️ DOWNLOAD JPEG
+                </button>
+                <button type="button" class="btn-neon" id="regenerateBtn" onclick="resetForm()">
+                    🔄 NEW UPLOAD
+                </button>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <div class="info-title">ℹ️ HOW IT WORKS</div>
+            <p style="margin-bottom: 15px;">
+                <strong>1. UPLOAD:</strong> Upload 1 combined image OR 2 separate Aadhaar card images
+            </p>
+            <p style="margin-bottom: 15px;">
+                <strong>📍 MODE 1 - Two Separate Images:</strong>
+                <br>• First image uploaded → Appears on LEFT side of A4
+                <br>• Second image uploaded → Appears on RIGHT side of A4
+            </p>
+            <p style="margin-bottom: 15px;">
+                <strong>📍 MODE 2 - Single Combined Image:</strong>
+                <br>• Upload 1 image with both front and back cards
+                <br>• System automatically detects and splits the image
+                <br>• Smart detection identifies which part is front/back
+            </p>
+            <p style="margin-bottom: 15px;">
+                <strong>2. ENHANCE:</strong> AI-powered enhancement improves text clarity, QR code visibility, and reduces noise
+            </p>
+            <p style="margin-bottom: 15px;">
+                <strong>3. LAYOUT:</strong> Images are automatically placed on standard A4 template (300 DPI, 2480×3508px)
+            </p>
+            <p style="margin-bottom: 0;">
+                <strong>4. DOWNLOAD:</strong> Preview before download, then export as high-quality JPEG
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Depth Fog Layer -->
+<div id="depthFog"></div>
+
+<!-- Theme Toggle Button -->
+<button id="themeToggle" title="Switch theme (Cyan/Green/Red/Purple)">🎨</button>
+
+<script>
+    const dragDropArea = document.getElementById('dragDropArea');
+    const fileInput = document.getElementById('imageFiles');
+    const fileList = document.getElementById('fileList');
+    const processingSection = document.getElementById('processingSection');
+    const previewContainer = document.getElementById('previewContainer');
+    const progressContainer = document.getElementById('progressContainer');
+    const previewImage = document.getElementById('previewImage');
+    const previewBtn = document.getElementById('previewBtn');
+    const statusText = document.getElementById('statusText');
+
+    let selectedFiles = [];
+    let fullImageData = null;
+
+    // ===== DRAG & DROP =====
+    dragDropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dragDropArea.classList.add('drag-over');
+    });
+
+    dragDropArea.addEventListener('dragleave', () => {
+        dragDropArea.classList.remove('drag-over');
+    });
+
+    dragDropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dragDropArea.classList.remove('drag-over');
+        fileInput.files = e.dataTransfer.files;
+        handleFileSelection();
+    });
+
+    fileInput.addEventListener('change', handleFileSelection);
+
+    // ===== FILE SELECTION HANDLER =====
+    function handleFileSelection() {
+        selectedFiles = Array.from(fileInput.files);
+        fileList.innerHTML = '';
+
+        if (selectedFiles.length === 0) {
+            processingSection.style.display = 'none';
+            previewContainer.classList.remove('show');
+            return;
+        }
+
+        if (selectedFiles.length < 1 || selectedFiles.length > 2) {
+            addFileItem('⚠️', `Upload 1 image (combined) or 2 images (front & back). You selected ${selectedFiles.length}.`, 'error');
+            processingSection.style.display = 'none';
+            return;
+        }
+
+        if (selectedFiles.length === 1) {
+            addFileItem('📸', `Combined: ${selectedFiles[0].name} (${formatFileSize(selectedFiles[0].size)})`, 'success');
+            addFileItem('ℹ️', 'System will auto-detect and split into front & back', 'info');
+        } else {
+            selectedFiles.forEach((file, index) => {
+                const icon = index === 0 ? '🆔' : '🔄';
+                const label = index === 0 ? 'Front' : 'Back';
+                addFileItem(icon, `${label}: ${file.name} (${formatFileSize(file.size)})`, 'success');
+            });
+        }
+
+        processingSection.style.display = 'block';
+        previewContainer.classList.remove('show');
+    }
+
+    function addFileItem(icon, text, className) {
+        const item = document.createElement('div');
+        item.className = `file-item ${className}`;
+        const position = selectedFiles.length === 1 ? '(LEFT SIDE)' : '(RIGHT SIDE)';
+        item.innerHTML = `
+            <div>
+                <div style="margin-bottom: 5px;">${icon} ${text}</div>
+                <small style="color: #7a7a7a;">→ Will appear on ${position}</small>
+            </div>
+        `;
+        fileList.appendChild(item);
+    }
+
+    // ===== FILE SIZE FORMATTER =====
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    // ===== GENERATE PREVIEW =====
+    async function generatePreview() {
+        if (selectedFiles.length < 1 || selectedFiles.length > 2) {
+            alert('Upload 1 image (combined) or 2 images (front & back)');
+            return;
+        }
+
+        previewBtn.disabled = true;
+        progressContainer.classList.add('show');
+        statusText.textContent = '✨ Enhancing and composing layout...';
+
+        try {
+            const formData = new FormData();
+            formData.append('model.ImageFiles', selectedFiles[0]);
+
+            if (selectedFiles.length === 2) {
+                formData.append('model.ImageFiles', selectedFiles[1]);
+            }
+
+            const response = await fetch('@Url.Action("PreviewAadhaarPdf", "Home")', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Failed to generate preview');
+            }
+
+            // Show preview
+            previewImage.src = 'data:image/jpeg;base64,' + data.preview;
+            fullImageData = data.full;
+
+            progressContainer.classList.remove('show');
+            previewContainer.classList.add('show');
+            statusText.textContent = '✨ Enhancing and composing layout...';
+
+            // Trigger particle burst effect on success
+            createParticleBurst(previewImage.getBoundingClientRect().left + previewImage.offsetWidth / 2,
+                              previewImage.getBoundingClientRect().top + previewImage.offsetHeight / 2);
+
+            // Trigger energy ripple from container
+            createEnergyRipple();
+
+        } catch (error) {
+            progressContainer.classList.remove('show');
+            alert('❌ Error: ' + error.message);
+            console.error(error);
+        } finally {
+            previewBtn.disabled = false;
+        }
+    }
+
+    // ===== DOWNLOAD JPEG =====
+    async function downloadJpeg() {
+        if (!fullImageData) {
+            alert('Please generate preview first');
+            return;
+        }
+
+        try {
+            const byteCharacters = atob(fullImageData);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `aadhaar_${new Date().toISOString().slice(0, 10)}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+        } catch (error) {
+            alert('❌ Error downloading: ' + error.message);
+        }
+     }
+
+    // ===== OPEN PREVIEW IN NEW TAB =====
+    function openPreviewInNewTab() {
+        if (!fullImageData) {
+            alert('Please generate preview first');
+            return;
+        }
+
+        try {
+            const byteCharacters = atob(fullImageData);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+            const url = URL.createObjectURL(blob);
+            const newTab = window.open(url);
+
+            if (newTab) {
+                newTab.focus();
+            } else {
+                alert('⚠️ Pop-up blocked. Please enable pop-ups for this site.');
+            }
+
+        } catch (error) {
+            alert('❌ Error opening preview: ' + error.message);
+        }
+    }
+
+     // ===== RESET FORM =====
+    function resetForm() {
+        fileInput.value = '';
+        selectedFiles = [];
+        fullImageData = null;
+        fileList.innerHTML = '';
+        processingSection.style.display = 'none';
+        previewContainer.classList.remove('show');
+        progressContainer.classList.remove('show');
+        dragDropArea.classList.remove('drag-over');
+    }
+
+    // ===== ADVANCED CURSOR GLOW SYSTEM (60FPS) =====
+    class CursorGlowSystem {
+        constructor() {
+            this.cursorGlow = document.getElementById('cursorGlow');
+            if (!this.cursorGlow) {
+                this.cursorGlow = document.createElement('div');
+                this.cursorGlow.id = 'cursorGlow';
+                this.cursorGlow.classList.add('active');
+                document.body.appendChild(this.cursorGlow);
+            }
+
+            this.mouseX = 0;
+            this.mouseY = 0;
+            this.glowX = 0;
+            this.glowY = 0;
+            this.isActive = false;
+            this.trailDelay = 0;
+            this.trailInterval = 4; // Create trail every 4 frames for smoothness
+            this.maxTrails = 8;
+            this.trails = [];
+
+            this.bindEvents();
+            this.startAnimation();
+        }
+
+        bindEvents() {
+            document.addEventListener('mousemove', (e) => {
+                this.mouseX = e.clientX;
+                this.mouseY = e.clientY;
+                if (!this.isActive) {
+                    this.isActive = true;
+                    this.cursorGlow.style.opacity = '0.7';
+                }
+            });
+
+            document.addEventListener('mouseenter', () => {
+                this.isActive = true;
+                this.cursorGlow.style.opacity = '0.7';
+            });
+
+            document.addEventListener('mouseleave', () => {
+                this.isActive = false;
+                this.cursorGlow.style.opacity = '0';
+            });
+
+            document.addEventListener('click', (e) => {
+                this.createClickBurst(e.clientX, e.clientY);
+            });
+
+            // Hover effects on interactive elements
+            document.addEventListener('mouseover', (e) => {
+                if (e.target.classList.contains('btn-neon') || 
+                    e.target.classList.contains('drag-drop-area') ||
+                    e.target.classList.contains('preview-image')) {
+                    this.intensifyGlow();
+                }
+            });
+
+            document.addEventListener('mouseout', (e) => {
+                if (e.target.classList.contains('btn-neon') || 
+                    e.target.classList.contains('drag-drop-area') ||
+                    e.target.classList.contains('preview-image')) {
+                    this.normalizeGlow();
+                }
+            });
+        }
+
+        startAnimation() {
+            const animate = () => {
+                // Smooth interpolation (lerp) for cinematic trailing
+                const lerpFactor = 0.12; // Adjust for trail smoothness
+                this.glowX += (this.mouseX - this.glowX) * lerpFactor;
+                this.glowY += (this.mouseY - this.glowY) * lerpFactor;
+
+                // Update glow position using left/top for stable centering
+                this.cursorGlow.style.left = this.glowX + 'px';
+                this.cursorGlow.style.top = this.glowY + 'px';
+                this.cursorGlow.style.transform = 'translate(-50%, -50%) scale(0.8)';
+
+                // Create trail particles
+                if (this.isActive && this.trailDelay % this.trailInterval === 0) {
+                    this.createTrail(this.glowX, this.glowY);
+                }
+
+                this.trailDelay++;
+                if (this.trailDelay > 1000) this.trailDelay = 0;
+
+                requestAnimationFrame(animate);
+            };
+
+            requestAnimationFrame(animate);
+        }
+
+        createTrail(x, y) {
+            if (this.trails.length >= this.maxTrails) {
+                const oldTrail = this.trails.shift();
+                oldTrail.remove();
+            }
+
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+
+            const size = 40 + Math.random() * 30;
+            trail.style.width = size + 'px';
+            trail.style.height = size + 'px';
+            trail.style.left = (x - size / 2) + 'px';
+            trail.style.top = (y - size / 2) + 'px';
+            trail.style.animation = `trailFade 0.8s ease-out forwards`;
+
+            document.body.appendChild(trail);
+            this.trails.push(trail);
+
+            // Auto-remove after fade
+            setTimeout(() => {
+                trail.remove();
+                this.trails = this.trails.filter(t => t !== trail);
+            }, 800);
+        }
+
+        createClickBurst(x, y) {
+            const burst = document.createElement('div');
+            burst.style.position = 'fixed';
+            burst.style.left = x + 'px';
+            burst.style.top = y + 'px';
+            burst.style.width = '100px';
+            burst.style.height = '100px';
+            burst.style.borderRadius = '50%';
+            burst.style.background = 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 30%, transparent 100%)';
+            burst.style.filter = 'blur(30px)';
+            burst.style.mixBlendMode = 'screen';
+            burst.style.pointerEvents = 'none';
+            burst.style.zIndex = '9999';
+            burst.style.animation = `clickBurst 0.6s ease-out forwards`;
+
+            document.body.appendChild(burst);
+
+            setTimeout(() => burst.remove(), 600);
+        }
+
+        intensifyGlow() {
+            this.cursorGlow.style.opacity = '1';
+            this.cursorGlow.style.filter = 'blur(35px)';
+            this.cursorGlow.style.boxShadow = `
+                0 0 30px rgba(255, 255, 255, 0.9),
+                0 0 60px rgba(255, 255, 255, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.4)
+            `;
+        }
+
+        normalizeGlow() {
+            this.cursorGlow.style.opacity = '0.7';
+            this.cursorGlow.style.filter = 'blur(25px)';
+            this.cursorGlow.style.boxShadow = `
+                0 0 20px rgba(255, 255, 255, 0.6),
+                0 0 40px rgba(255, 255, 255, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.2)
+            `;
+        }
+    }
+
+    // Initialize cursor glow system when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            new CursorGlowSystem();
+            initializeAdvancedEffects();
+        });
+    } else {
+        new CursorGlowSystem();
+        initializeAdvancedEffects();
+    }
+
+    // ===== ADVANCED EFFECTS SYSTEM =====
+
+    // Energy ripple from container
+    function createEnergyRipple() {
+        const container = document.querySelector('.cyber-container');
+        const rect = container.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const ripple = document.createElement('div');
+        ripple.className = 'energy-ripple';
+        ripple.style.left = centerX + 'px';
+        ripple.style.top = centerY + 'px';
+        ripple.style.animation = 'energyRipple 0.8s ease-out forwards';
+
+        document.body.appendChild(ripple);
+
+        setTimeout(() => ripple.remove(), 800);
+    }
+
+    // Particle burst on success
+    function createParticleBurst(x, y) {
+        const particleCount = 12;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle-burst';
+
+            const size = 8 + Math.random() * 12;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+
+            const angle = (i / particleCount) * Math.PI * 2;
+            const velocity = 100 + Math.random() * 150;
+            const tx = Math.cos(angle) * velocity;
+            const ty = Math.sin(angle) * velocity;
+
+            particle.style.setProperty('--tx', tx + 'px');
+            particle.style.background = `radial-gradient(circle, rgba(0, 255, 255, 0.9) 0%, rgba(0, 255, 255, 0.4) 70%, transparent 100%)`;
+            particle.style.filter = 'blur(3px)';
+            particle.style.boxShadow = '0 0 10px rgba(0, 255, 255, 0.8)';
+            particle.style.animation = `particleFall ${0.8 + Math.random() * 0.4}s ease-out forwards`;
+
+            document.body.appendChild(particle);
+
+            setTimeout(() => particle.remove(), 1200);
+        }
+    }
+
+    // Theme management system
+    function initializeAdvancedEffects() {
+        const themeToggle = document.getElementById('themeToggle');
+        const themes = ['cyan', 'matrix', 'danger', 'purple'];
+        let currentThemeIndex = 0;
+
+        // Load saved theme from localStorage
+        const savedTheme = localStorage.getItem('appTheme') || 'cyan';
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const newTheme = themes[currentThemeIndex];
+            applyTheme(newTheme);
+            localStorage.setItem('appTheme', newTheme);
+
+            // Visual feedback
+            createEnergyRipple();
+        });
+    }
+
+    function applyTheme(theme) {
+        document.body.classList.remove('theme-matrix', 'theme-danger', 'theme-purple');
+
+        const themeColors = {
+            cyan: {
+                primary: '#00ffff',
+                secondary: '#ff00ff',
+                accent: '#00ff41'
+            },
+            matrix: {
+                primary: '#00ff41',
+                secondary: '#0f0',
+                accent: '#00ff00'
+            },
+            danger: {
+                primary: '#ff1744',
+                secondary: '#ff6b6b',
+                accent: '#ff1744'
+            },
+            purple: {
+                primary: '#9c27b0',
+                secondary: '#ce93d8',
+                accent: '#ba68c8'
+            }
+        };
+
+        const colors = themeColors[theme];
+        document.documentElement.style.setProperty('--primary-color', colors.primary);
+        document.documentElement.style.setProperty('--secondary-color', colors.secondary);
+        document.documentElement.style.setProperty('--accent-color', colors.accent);
+
+        if (theme !== 'cyan') {
+            document.body.classList.add(`theme-${theme}`);
+        }
+
+        // Update all color-dependent elements
+        updateThemeColors(colors);
+    }
+
+    function updateThemeColors(colors) {
+        // Update cyber container border
+        const container = document.querySelector('.cyber-container');
+        if (container) {
+            container.style.borderColor = colors.primary;
+        }
+
+        // Update buttons
+        document.querySelectorAll('.btn-neon').forEach(btn => {
+            if (btn.classList.contains('primary')) {
+                btn.style.borderColor = colors.secondary;
+                btn.style.color = colors.secondary;
+            } else if (btn.classList.contains('success')) {
+                btn.style.borderColor = colors.accent;
+                btn.style.color = colors.accent;
+            } else {
+                btn.style.borderColor = colors.primary;
+                btn.style.color = colors.primary;
+            }
+        });
+
+        // Update drag-drop area
+        const dragArea = document.getElementById('dragDropArea');
+        if (dragArea) {
+            dragArea.style.borderColor = colors.primary;
+        }
+    }
+
+    // Energy pulse on button actions
+    document.querySelectorAll('.btn-neon').forEach(btn => {
+        btn.addEventListener('click', function() {
+            createEnergyRipple();
+        });
+    });
+</script>

@@ -1,0 +1,48 @@
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.cache
+*.VC.db
+*.VC.db-shm
+*.VC.db-wal
+
+# Build directories
+bin/
+obj/
+out/
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# NuGet
+.nuget/
+*.nupkg
+*.snupkg
+
+# Local environment
+.env
+.env.local
+launchSettings.json
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+temp/
+
+# Node (if applicable)
+node_modules/
+npm-debug.log
