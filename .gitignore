@@ -42,7 +42,3 @@ Thumbs.db
 # Temporary files
 *.tmp
 temp/
-
-# Node (if applicable)
-node_modules/
-npm-debug.log
