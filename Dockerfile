@@ -13,4 +13,4 @@ COPY --from=build /app/out .
 ENV ASPNETCORE_URLS=http://+:10000
 EXPOSE 10000
 
-CMD ["dotnet", "JS_Printing_Service.dll"]
+CMD ["dotnet", "JS Printing Service.dll"]
